@@ -1,0 +1,22 @@
+#! /usr/bin/env bash
+# vim: filetype=sh syntax=sh
+
+set -eu
+
+if [[ -z $(which wget) ]]
+then
+  printf "Can't find wget\n"
+  exit 1
+fi
+
+if [[ 2 -le $# ]]
+then
+  file_name="$1"
+
+  shift
+  wget -O "$file_name" $@
+else
+  printf '\033[33mUsage:\e[0m %s <filename> <file_segment_url> [...]\n' ${0##*/}
+  printf '\033[33mExample:\e[0m %s "my_file.txt" https://example.com/file_segment-{0001..00052}.txt\n' ${0##*/}
+fi
+

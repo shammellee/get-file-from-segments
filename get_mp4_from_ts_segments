@@ -1,0 +1,31 @@
+#! /usr/bin/env bash
+# vim: filetype=sh syntax=sh
+
+set -eu
+
+if [[ -z $(which wget) ]]
+then
+  printf "Can't find wget\n"
+  exit 1
+fi
+
+if [[ -z $(which ffmpeg) ]]
+then
+  printf "Can't find ffmpeg\n"
+  exit 1
+fi
+
+if [[ 2 -le $# ]]
+then
+  ts_file="$1"
+  mp4_file="${ts_file%*.ts}.mp4"
+
+  shift
+  wget -O "$ts_file" $@
+  ffmpeg -loglevel panic -stats -nostdin -i "$ts_file" -acodec copy -vcodec copy "$mp4_file"
+  rm "$ts_file"
+else
+  printf '\033[33mUsage:\e[0m %s <ts_file> <ts_segment_url> [...]\n' ${0##*/}
+  printf '\033[33mExample:\e[0m %s "my_video.ts" https://example.com/video_segment-{0001..00052}.ts\n' ${0##*/}
+fi
+
